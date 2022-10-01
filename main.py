@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-# intialize new api instance
+# Intialize new api instance
 app = FastAPI()
 
 
@@ -9,4 +9,4 @@ async def root():
     return {"message": "Hello World"}
 
 
-# intialize our web server
+# Intialize our web server
