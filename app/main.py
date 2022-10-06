@@ -12,7 +12,7 @@ class Post(BaseModel):
     title: str
     content: str
     published : bool = True
-    rating: Optional[int] = None
+    #rating: Optional[int] = None
 
 # Store the post in memory till database will be created
 # TODO create database server
