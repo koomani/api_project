@@ -20,7 +20,7 @@ while True:
                                 host='localhost',
                                 database='api_project', 
                                 user='postgres', 
-                                password='Python@1234', 
+                                password='***', 
                                 cursor_factory=RealDictCursor
                                 )
         cursor = conn.cursor()
