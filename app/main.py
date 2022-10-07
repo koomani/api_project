@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Response, status, HTTPException
 from pydantic import BaseModel
-from typing import Optional
 from random import randrange
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -14,7 +13,6 @@ class Post(BaseModel):
     title: str
     content: str
     published : bool = True
-    #rating: Optional[int] = None
 
 # Database connection
 while True:
@@ -34,7 +32,6 @@ while True:
         time.sleep(3)
 
 
-
 # Store the post in memory till database will be created
 the_posts = [
             {"title": "title post", "content": "content post", "id": 1},
@@ -52,10 +49,14 @@ def get_posts() -> dict:
 
 # Create request
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create_posts(new_post: Post) -> dict:
-    post = new_post.dict()
-    post["id"] = randrange(0, 1000000000)
-    the_posts.append(post)
+def create_posts(post: Post) -> dict:
+    cursor.execute(""" INSERT INTO  posts (title, content, published)
+                        VALUES(%s, %s, %s) RETURNING * """, (post.title, post.content, post.published))
+    # fetch post
+    post = cursor.fetchone()
+
+    # commit the change to sql server
+    conn.commit()
     return {"Posts": post}
 
 
