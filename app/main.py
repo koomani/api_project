@@ -54,7 +54,6 @@ def create_posts(post: Post) -> dict:
                         VALUES(%s, %s, %s) RETURNING * """, (post.title, post.content, post.published))
     # fetch post
     post = cursor.fetchone()
-
     # commit the change to sql server
     conn.commit()
     return {"Posts": post}
@@ -68,8 +67,10 @@ def get_last_post():
 
 # Get request with id
 @app.get("/posts/{id}", status_code=status.HTTP_200_OK)     
-def get_post(id: int, response: Response):       
-    post = find_post(id)
+def get_post(id: int, response: Response):
+    cursor.execute(""" SELECT * FROM posts WHERE id = %s """, (str(id),))
+    # fetch post
+    post = cursor.fetchone()
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Post {id} was Not Found")
