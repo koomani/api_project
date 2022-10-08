@@ -86,29 +86,26 @@ def delete_post(id: int):
     post = cursor.fetchone()
     # commit the change to sql server
     conn.commit()
-    
+
     if post == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Post {id} was Not Found")
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-def find_index_post(id: int):
-    for i, p in enumerate(the_posts):
-        if p["id"] == id:
-            return i
-
-
 # Update request
 @app.put("/posts/{id}", status_code=status.HTTP_200_OK)
 def update_post(id: int, post: Post):
-    index = find_index_post(id)
-    if index == None:
+    cursor.execute(""" UPDATE posts SET title= %s, content = %s, published =%s where id = %s RETURNING * """
+                    ,(post.title, post.content, post.published, str(id)))
+    # fetch post
+    post = cursor.fetchone()
+    # commit the change to sql server
+    conn.commit()
+
+    if post == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Post {id} was Not Found")
-    post = post.dict()
-    post["id"] == id
-    the_posts[index] = post
-    return {"Data": post}
+    return {"data": post}
 
                             
