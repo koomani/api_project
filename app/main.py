@@ -20,7 +20,7 @@ while True:
                                 host='localhost',
                                 database='api_project', 
                                 user='postgres', 
-                                password='***', 
+                                password='Python@1234', 
                                 cursor_factory=RealDictCursor
                                 )
         cursor = conn.cursor()
@@ -70,26 +70,28 @@ def get_post(id: int, response: Response):
     cursor.execute(""" SELECT * FROM posts WHERE id = %s """, (str(id),))
     # fetch post
     post = cursor.fetchone()
+    # commit the change to sql server
+    conn.commit()
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Post {id} was Not Found")
     return {"Details": post}
 
-def find_post(id: int) -> Post:
-    for p in the_posts:
-        if p["id"] == id:
-            return p
-
 
 # Delete request
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int):
-    index = find_index_post(id)
-    if index == None:
+    cursor.execute(""" DELETE FROM posts WHERE id = %s RETURNING * """, (str(id),))
+    # fetch post
+    post = cursor.fetchone()
+    # commit the change to sql server
+    conn.commit()
+    
+    if post == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Post {id} was Not Found")
-    the_posts.pop(index)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
 
 def find_index_post(id: int):
     for i, p in enumerate(the_posts):
