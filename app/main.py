@@ -3,9 +3,25 @@ from pydantic import BaseModel
 import psycopg2                          # Database driver
 from psycopg2.extras import RealDictCursor
 import time
+from .DB import SessionLocal, engine
+from . import crud, models, schemas
+
+
+# Connect Sqlachemy to postgresql
+models.Base.metadata.create_all(bind=engine)
 
 # Intialize new api instance
 app = FastAPI()
+
+
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db              # creat generator object for each run
+    finally:
+        db.close()
+
 
 # Post creation skeleton
 class Post(BaseModel):
