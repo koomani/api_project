@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Response, status, HTTPException
 from pydantic import BaseModel
-import psycopg2
+import psycopg2                          # Database driver
 from psycopg2.extras import RealDictCursor
 import time
 
@@ -20,7 +20,7 @@ while True:
                                 host='localhost',
                                 database='api_project', 
                                 user='postgres', 
-                                password='Python@1234', 
+                                password='***', 
                                 cursor_factory=RealDictCursor
                                 )
         cursor = conn.cursor()
