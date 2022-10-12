@@ -14,3 +14,12 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Define baseclass
 Base = declarative_base()
+
+
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db              # creat generator object for each run
+    finally:
+        db.close()

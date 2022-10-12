@@ -3,7 +3,7 @@ from pydantic import BaseModel
 import psycopg2                          # Database driver
 from psycopg2.extras import RealDictCursor
 import time
-from .DB import SessionLocal, engine
+from .DB import engine, get_db
 from . import models
 from sqlalchemy.orm import Session
 
@@ -13,15 +13,6 @@ models.Base.metadata.create_all(bind=engine)
 
 # Intialize new api instance
 app = FastAPI()
-
-
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db              # creat generator object for each run
-    finally:
-        db.close()
 
 
 # Post creation skeleton
