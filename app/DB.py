@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 
 
 # Connection string ='postgresql://<username>:<password>@<ip-addresshostname>/<database_name>'
-SQLQLCHEMY_DATABASE_URL ='postgresql://postgres:Python@1234@localhost/api_project'
+SQLQLCHEMY_DATABASE_URL ='postgresql://postgres:admin12@localhost/api_project'
 
 # Engine drive to connect sql database
 engine = create_engine(SQLQLCHEMY_DATABASE_URL) 

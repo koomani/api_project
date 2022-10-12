@@ -1,10 +1,11 @@
-from fastapi import FastAPI, Response, status, HTTPException
+from fastapi import FastAPI, Response, status, HTTPException, Depends
 from pydantic import BaseModel
 import psycopg2                          # Database driver
 from psycopg2.extras import RealDictCursor
 import time
 from .DB import SessionLocal, engine
-from . import crud, models, schemas
+from . import models
+from sqlalchemy.orm import Session
 
 
 # Connect Sqlachemy to postgresql
@@ -55,12 +56,18 @@ the_posts = [
 
 
 # Get request
+@app.get("/sqlalchemy") 
+def test_posts(db: Session = Depends(get_db)):
+    return {"Data": "Success"}
+
+
+
+# Get request
 @app.get("/posts", status_code=status.HTTP_200_OK)       # Path app operation or root
 def get_posts() -> dict:
     cursor.execute(""" SELECT * FROM posts """)
     # fetch all 
     return {"Data": cursor.fetchall()}
-
 
 # Create request
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
