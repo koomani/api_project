@@ -14,7 +14,6 @@ models.Base.metadata.create_all(bind=engine)
 # Intialize new api instance
 app = FastAPI()
 
-
 # Post creation skeleton
 class Post(BaseModel):
     title: str
@@ -47,18 +46,11 @@ the_posts = [
 
 
 # Get request
-@app.get("/sqlalchemy") 
-def test_posts(db: Session = Depends(get_db)):
-    return {"Data": "Success"}
-
-
-
-# Get request
 @app.get("/posts", status_code=status.HTTP_200_OK)       # Path app operation or root
-def get_posts() -> dict:
-    cursor.execute(""" SELECT * FROM posts """)
-    # fetch all 
-    return {"Data": cursor.fetchall()}
+def get_posts(db: Session = Depends(get_db)):
+    # Send query to table (model) post
+    posts = db.query(models.post).all()                   # => select * from posts
+    return {"Data": posts}
 
 # Create request
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
