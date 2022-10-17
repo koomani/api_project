@@ -1,9 +1,5 @@
 from fastapi import FastAPI, Response, status, HTTPException, Depends
-from pydantic import BaseModel
-import psycopg2                          # Database driver
-from psycopg2.extras import RealDictCursor
-import time
-from .DB import engine, get_db
+from .database import engine, get_db
 from . import models
 from sqlalchemy.orm import Session
 
@@ -14,55 +10,20 @@ models.Base.metadata.create_all(bind=engine)
 # Intialize new api instance
 app = FastAPI()
 
-# Post creation skeleton
-class Post(BaseModel):
-    title: str
-    content: str
-    published : bool = True
-
-# Database connection
-while True:
-    try:
-        conn = psycopg2.connect(
-                                host='localhost',
-                                database='api_project', 
-                                user='postgres', 
-                                password='***', 
-                                cursor_factory=RealDictCursor
-                                )
-        cursor = conn.cursor()
-        print("Successfully connected")
-        break
-    except Exception as e:
-        print(" Failed to connection", str(e))
-        time.sleep(3)
-
-
-# Store the post in memory till database will be created
-the_posts = [
-            {"title": "title post", "content": "content post", "id": 1},
-            {"title": "Animals", "content": "Python", "id": 2},
-            ]
-
-
 # Get request
-@app.get("/posts", status_code=status.HTTP_200_OK)       # Path app operation or root
+@app.get("/posts", status_code=status.HTTP_200_OK)        # Path app operation or root
 def get_posts(db: Session = Depends(get_db)):
-    # Send query to table (model) post
     posts = db.query(models.post).all()                   # => select * from posts
     return {"Data": posts}
 
+
 # Create request
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create_posts(post: Post) -> dict:
-    cursor.execute(""" INSERT INTO  posts (title, content, published)
-                        VALUES(%s, %s, %s) RETURNING * """, (post.title, post.content, post.published))
-    # fetch post
-    post = cursor.fetchone()
-    # commit the change to sql server
-    conn.commit()
-    return {"Posts": post}
+def create_posts(db: Session = Depends(get_db)):
 
+    #return {"Posts": post}
+    pass
+'''
 
 @app.get("/posts/latest", status_code=status.HTTP_200_OK)
 def get_last_post():
@@ -114,4 +75,4 @@ def update_post(id: int, post: Post):
                             detail=f"Post {id} was Not Found")
     return {"data": post}
 
-                            
+'''
