@@ -1,7 +1,16 @@
 from fastapi import FastAPI, Response, status, HTTPException, Depends
-from .database import engine, get_db
-from . import models
 from sqlalchemy.orm import Session
+
+# To solve relative importing 
+import sys
+import os
+database_path = os.path.dirname(os.path.abspath("database.py"))
+models_path = os.path.dirname(os.path.abspath("models.py"))
+sys.path.append(os.path.dirname(database_path))
+sys.path.append(os.path.dirname(models_path))
+
+import models
+from database import engine, get_db
 
 
 # Connect Sqlachemy to postgresql
